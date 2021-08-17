@@ -7,3 +7,4 @@ class Hash:
     def bcrypt(password):
         hashed_pwd = pwd.hash(password)
         return hashed_pwd
+

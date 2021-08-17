@@ -1,32 +1,74 @@
 version: "3.8"
 
 services:
-
-  app:
-      container_name: app
-      build: .
-      command: bash -c "uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
-      volumes:
-        - .:/app
-      ports:
-        - 8000:8000
-      restart: always
-      depends_on:
-        - db
+  # app:
+  #   container_name: app
+  #   build: .
+  #   command: bash -c "uvicorn index:app --host 0.0.0.0 --port 8000 --reload"
+  #   volumes:
+  #     - .:/app
+  #   ports:
+  #     - 8000:8000
+  #   restart: always
+  #   environment:
+  #     - CELERY_BROKER=redis://redis:6379/0
+  #     - CELERY_BACKEND=redis://redis:6379/0
+  #   depends_on:
+  #     - mongodb
 
   redis:
-      container_name: redis
-      image: redis:6.2-alpine
+    container_name: redis
+    image: docker.io/bitnami/redis:6.2
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '6379:6379'
 
-    celery_worker:
-      container_name: celery_worker
-      build: .
-      command: celery -A celery_worker.celery worker --loglevel=info
-      volumes:
-        - .:/app
-      environment:
-        - CELERY_BROKER_URL=${CELERY_BROKER_URL}
-        - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
-      depends_on:
-        - app
-        - redis
+  # celery:
+  #     build: .
+  #     container_name: celery_worker
+  #     # command: celery -A core worker -l INFO
+  #     volumes:
+  #         - .:/usr/src/app
+  #     environment:
+  #         - DEBUG=1
+  #         - CELERY_BROKER=redis://redis:6379/0
+  #         - CELERY_BACKEND=redis://redis:6379/0
+  #     depends_on:
+  #         - app
+  #         - redis
+
+  mongodb:
+    container_name: mongo
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+    ports: 
+      - 27017:27017
+    volumes:
+      - './data:/data/db'
+
+  # airflow:
+  #   image: puckel/docker-airflow:latest
+  #   environment:
+  #     - LOAD_ex=n
+  #     - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
+  #     - EXECUTOR=Celery
+  #   logging: 
+  #     options: 
+  #       max-size: 10m
+  #       max-file: "3"
+        
+  #   ports:
+  #     - '8080:8080'
+  #   volumes:
+  #     - ./dags:/usr/local/airflow/dags
+  #   depends_on: 
+  #     - mongodb
+  #     - redis
+
+  
