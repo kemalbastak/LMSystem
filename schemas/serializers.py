@@ -1,5 +1,12 @@
 def serialize_dict(data) -> dict:
-    return {**{i:str(data[i]) for i in data if i=='_id'},**{i:data[i] for i in data if i!='_id'}}
+    try:
+        return {**{i:str(data[i]) for i in data if i=='_id'},**{i:data[i] for i in data if i!='_id'}}
+    except Exception as e:
+        print(e)
+
 
 def serialize_list(entity) -> list:
-    return [serialize_dict(a) for a in entity]
+    try:
+        return [serialize_dict(a) for a in entity]
+    except Exception as e:
+        print(e)
