@@ -1,10 +1,11 @@
-# Library Management System built with FastAPI
+# Library Management System with FastAPI
 
 ## This project is a Library Management System built with FastAPI
 
 To install venv run
 ```
-python -m venv venv venv\Scripts\activate
+python -m venv venv 
+venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
