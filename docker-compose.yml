@@ -25,19 +25,19 @@ services:
     ports:
       - '6379:6379'
 
-  # celery:
-  #     build: .
-  #     container_name: celery_worker
-  #     # command: celery -A core worker -l INFO
-  #     volumes:
-  #         - .:/usr/src/app
-  #     environment:
-  #         - DEBUG=1
-  #         - CELERY_BROKER=redis://redis:6379/0
-  #         - CELERY_BACKEND=redis://redis:6379/0
-  #     depends_on:
-  #         - app
-  #         - redis
+  celery:
+      build: .
+      container_name: celery_worker
+      # command: celery -A core worker -l INFO
+      volumes:
+          - .:/usr/src/app
+      environment:
+          - DEBUG=1
+          - CELERY_BROKER=redis://redis:6379/0
+          - CELERY_BACKEND=redis://redis:6379/0
+      depends_on:
+          - app
+          - redis
 
   mongodb:
     container_name: mongo

@@ -18,7 +18,7 @@ user = APIRouter()
 def regx(param):
     return re.compile(param, re.IGNORECASE)
 
-@user.get('/api/v1/user', tags=["Get User"], response_model_exclude={"password"}) #, response_model=ShowUser
+@user.get('/', tags=["Get User"], response_model_exclude={"password"}) #, response_model=ShowUser
 async def find_all_users(limit:int = 10, page:int = 0):
     print(conn.local.user.find())
     print(serialize_list(conn.LibMS.user.find()))
@@ -26,7 +26,7 @@ async def find_all_users(limit:int = 10, page:int = 0):
 
 
 #Finds by name
-@user.get('/api/v1/user/{name}', tags=["Get User"])
+@user.get('/{name}', tags=["Get User"])
 async def find_by_name(name):
     user = conn.LibMS.user.find_one({"name" : {"$regex" : regx(name)}})
     print(user)
@@ -35,13 +35,13 @@ async def find_by_name(name):
     user = serialize_dict(user)
     return user
 
-@user.post('/api/v1/user', tags=["Post User"])
+@user.post('/', tags=["Post User"])
 async def create_user(user: User):
     user.password = Hash.bcrypt(user.password)
     conn.LibMS.user.insert_one(dict(user))
     return serialize_list(conn.LibMS.user.find())
 
-@user.post('/api/v1/user/create_many_users', tags=["Post User"])
+@user.post('/create_many_users', tags=["Post User"])
 async def create_user(amount:int=10):
     users_created = generate_user(amount)
     print(users_created)
@@ -49,7 +49,7 @@ async def create_user(amount:int=10):
     # print(serialize_list(conn.LibMS.library.find()))
     return serialize_list(users_created)
 
-@user.put('/api/v1/user/{id}', tags=["Update User"])
+@user.put('/{id}', tags=["Update User"])
 async def update_user(id, user: User):
     conn.LibMS.user.find_one_and_update({"_id":ObjectId(id)}, {
         "$set":dict(user)
@@ -60,6 +60,12 @@ async def update_user(id, user: User):
 
 
 
-@user.delete('/api/v1/user/{id}', tags=["Delete User"])
+@user.delete('/{id}', tags=["Delete User"])
 async def delete_user(id, user: User):
     return serialize_dict(conn.local.user.find_one_and_delete({"_id":ObjectId(id)}))
+    
+
+
+@user.delete('/delete_all_users/', tags=["Delete User"])
+async def delete_all_users():
+    return serialize_dict(conn.LibMS.user.delete_many({}))
