@@ -8,3 +8,5 @@ class Hash:
         hashed_pwd = pwd.hash(password)
         return hashed_pwd
 
+def test():
+    pass
